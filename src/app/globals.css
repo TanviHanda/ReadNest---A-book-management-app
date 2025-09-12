@@ -1,0 +1,820 @@
+@import "tailwindcss";
+
+/* Custom Font Faces */
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/src/app/fonts/IBMPlexSans-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/src/app/fonts/IBMPlexSans-Medium.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/src/app/fonts/IBMPlexSans-SemiBold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/src/app/fonts/IBMPlexSans-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Bebas Neue";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/src/app/fonts/BebasNeue-Regular.ttf") format("truetype");
+}
+
+/* Theme Configuration - v4 Style */
+@theme {
+  /* Font Families */
+  --font-ibm-plex-sans: "IBM Plex Sans", sans-serif;
+  --font-bebas-neue: "Bebas Neue", cursive;
+
+  /* Custom Colors */
+  --color-primary: #e7c9a5;
+  --color-primary-admin: #25388c;
+
+  /* Green Palette */
+  --color-green: #027a48;
+  --color-green-100: #ecfdf3;
+  --color-green-400: #4c7b62;
+  --color-green-500: #2cc171;
+  --color-green-800: #027a48;
+
+  /* Red Palette */
+  --color-red: #ef3a4b;
+  --color-red-400: #f46f70;
+  --color-red-500: #e27233;
+  --color-red-800: #ef3a4b;
+
+  /* Blue Palette */
+  --color-blue-100: #0089f1;
+
+  /* Light Palette */
+  --color-light-100: #d6e0ff;
+  --color-light-200: #eed1ac;
+  --color-light-300: #f8f8ff;
+  --color-light-400: #edf1f1;
+  --color-light-500: #8d8d8d;
+  --color-light-600: #f9fafb;
+  --color-light-700: #e2e8f0;
+  --color-light-800: #f8fafc;
+
+  /* Dark Palette */
+  --color-dark-100: #16191e;
+  --color-dark-200: #3a354e;
+  --color-dark-300: #232839;
+  --color-dark-400: #1e293b;
+  --color-dark-500: #0f172a;
+  --color-dark-600: #333c5c;
+  --color-dark-700: #464f6f;
+  --color-dark-800: #1e2230;
+
+  /* Gray Palette */
+  --color-gray-100: #cbd5e1;
+
+  /* Shadcn/ui Colors (HSL format) */
+  --color-background: 222.2 84% 4.9%;
+  --color-foreground: 210 40% 98%;
+  --color-card: 222.2 84% 4.9%;
+  --color-card-foreground: 210 40% 98%;
+  --color-popover: 222.2 84% 4.9%;
+  --color-popover-foreground: 210 40% 98%;
+  --color-primary-foreground: 222.2 47.4% 11.2%;
+  --color-secondary: 217.2 32.6% 17.5%;
+  --color-secondary-foreground: 210 40% 98%;
+  --color-muted: 217.2 32.6% 17.5%;
+  --color-muted-foreground: 215 20.2% 65.1%;
+  --color-accent: 217.2 32.6% 17.5%;
+  --color-accent-foreground: 210 40% 98%;
+  --color-destructive: 0 62.8% 30.6%;
+  --color-destructive-foreground: 210 40% 98%;
+  --color-border: 217.2 32.6% 17.5%;
+  --color-input: 217.2 32.6% 17.5%;
+  --color-ring: 212.7 26.8% 83.9%;
+
+  /* Chart Colors */
+  --color-chart-1: 220 70% 50%;
+  --color-chart-2: 160 60% 45%;
+  --color-chart-3: 30 80% 55%;
+  --color-chart-4: 280 65% 60%;
+  --color-chart-5: 340 75% 55%;
+
+  /* Custom Breakpoints */
+  --breakpoint-xs: 480px;
+
+  /* Radius & Border Radius */
+  --radius: 0.5rem;
+
+  /* Background Images */
+  --background-image-pattern: url("/images/pattern.webp");
+
+  /* Custom Spacing (if needed) */
+  --spacing-14: 3.5rem;
+}
+
+/* Base Layer Styles */
+@layer base {
+  .hide-scrollbar::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    border-radius: 0px;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 0px;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: transparent;
+  }
+}
+
+/* Component Utilities - v4 Style using @utility */
+@utility form-btn {
+  background-color: var(--color-primary);
+  color: var(--color-dark-100);
+  display: inline-flex;
+  min-height: 3.5rem;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.5rem;
+
+  &:hover {
+    background-color: var(--color-primary);
+
+  }
+}
+
+@utility form-input {
+  width: 100%;
+  min-height: 3.5rem;
+  border: none;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 700;
+  color: white;
+  background-color: var(--color-dark-300);
+
+  &::placeholder {
+    font-weight: 400;
+    color: var(--color-light-100);
+  }
+
+  &:focus-visible {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow: none;
+  }
+}
+
+/* Book Card Utilities */
+@utility book-title {
+  margin-top: 0.5rem;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  color: white;
+
+  @media (min-width: 480px) {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+}
+
+@utility book-genre {
+  margin-top: 0.25rem;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-style: italic;
+  color: var(--color-light-100);
+
+  @media (min-width: 480px) {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+}
+
+@utility book-loaned {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+
+  @media (max-width: 479px) {
+    justify-content: center;
+  }
+}
+
+@utility book-btn {
+  background-color: var(--color-dark-600);
+  margin-top: 0.75rem;
+  min-height: 3.5rem;
+  width: 100%;
+  font-family: var(--font-family-bebas-neue);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: var(--color-primary);
+}
+
+/* Borrowed Book */
+@utility borrowed-book {
+  background: linear-gradient(180deg, #12141d 0%, #12151f 100%);
+  padding: 1.25rem;
+  border-radius: 1rem;
+  position: relative;
+
+  @media (min-width: 480px) {
+    width: min-content;
+  }
+
+  width: 100%;
+}
+
+@utility borrowed-book_cover {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border-radius: 0.5rem;
+
+  @media (min-width: 1024px) {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}
+
+/* Book Cover Size Classes */
+.book-cover_extra_small {
+  width: 28.95px;
+  height: 2.5rem;
+}
+
+.book-cover_small {
+  width: 55px;
+  height: 76px;
+}
+
+.book-cover_medium {
+  width: 144px;
+  height: 199px;
+}
+
+.book-cover_regular {
+  width: 114px;
+  height: 169px;
+}
+
+@media (min-width: 480px) {
+  .book-cover_regular {
+    width: 174px;
+    height: 239px;
+  }
+}
+
+.book-cover_wide {
+  width: 256px;
+  height: 354px;
+}
+
+@media (min-width: 480px) {
+  .book-cover_wide {
+    width: 296px;
+    height: 404px;
+  }
+}
+
+/* Book List */
+.book-list {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+@media (max-width: 479px) {
+  .book-list {
+    justify-content: space-between;
+  }
+}
+
+@media (min-width: 480px) {
+  .book-list {
+    gap: 2.5rem;
+  }
+}
+
+/* Book Overview */
+.book-overview {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 3rem;
+}
+
+@media (min-width: 640px) {
+  .book-overview {
+    gap: 8rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .book-overview {
+    flex-direction: row;
+    gap: 2rem;
+  }
+}
+
+.book-overview h1 {
+  font-size: 3rem;
+  line-height: 1;
+  font-weight: 600;
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .book-overview h1 {
+    font-size: 4.5rem;
+  }
+}
+
+.book-info {
+  margin-top: 1.75rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  color: var(--color-light-100);
+}
+
+.book-copies {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+.book-copies p {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  color: var(--color-light-100);
+}
+
+.book-copies p span {
+  margin-left: 0.5rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.book-description {
+  margin-top: 0.5rem;
+  text-align: justify;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  color: var(--color-light-100);
+}
+
+.book-overview_btn {
+  margin-top: 1rem;
+  min-height: 3.5rem;
+  width: fit-content;
+  background-color: var(--color-primary);
+  color: var(--color-dark-100);
+}
+
+.book-overview_btn:hover {
+  background-color: rgb(var(--color-primary) / 0.9);
+}
+
+@media (max-width: 767px) {
+  .book-overview_btn {
+    width: 100%;
+  }
+}
+
+/* File Upload */
+.upload-btn {
+  display: flex;
+  min-height: 3.5rem;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  border-radius: 0.375rem;
+}
+
+.upload-filename {
+  margin-top: 0.25rem;
+  text-align: center;
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.progress {
+  border-radius: 9999px;
+  background-color: var(--color-green-800);
+  padding: 0.125rem;
+  text-align: center;
+  font-family: var(--font-family-bebas-neue);
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-light-100);
+}
+
+/* Search */
+.search {
+  position: relative;
+  margin-top: 2.5rem;
+  display: flex;
+  min-height: 3.5rem;
+  width: 100%;
+  align-items: center;
+  border-radius: 0.75rem;
+  background-color: var(--color-dark-300);
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.search-input {
+  width: 100%;
+  border: none;
+  font-weight: 700;
+  color: white;
+}
+
+.search-input::placeholder {
+  font-weight: 400;
+  color: var(--color-light-100);
+}
+
+.search-input:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* Book Receipt */
+.book-receipt_admin-btn {
+  background-color: var(--color-light-300);
+  border-radius: 0.375rem;
+  color: var(--color-primary-admin);
+  font-weight: 600;
+}
+
+.book-receipt_admin-btn:hover {
+  background-color: rgb(var(--color-light-300) / 0.8);
+}
+
+/* Book Ticket */
+#book-ticket {
+  position: relative;
+  margin-top: 2.5rem;
+  display: none;
+  width: 544px;
+  overflow: hidden;
+  background-color: var(--color-dark-300);
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+#book-ticket #book-details div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border-radius: 0.375rem;
+  border: 1px solid rgb(var(--color-light-100) / 0.1);
+  padding: 0.75rem;
+}
+
+#book-ticket #book-details div p:first-child {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: var(--color-light-700);
+}
+
+#book-ticket #book-details div p:last-child {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 700;
+  color: white;
+}
+
+#book-ticket #book-divider div:first-child {
+  position: absolute;
+  left: -0.875rem;
+  top: 50%;
+  width: 1.75rem;
+  height: 1.75rem;
+  transform: translateY(-50%);
+  border-radius: 9999px;
+  background-color: black;
+}
+
+#book-ticket #book-divider div:last-child {
+  position: absolute;
+  right: -0.875rem;
+  top: 50%;
+  width: 1.75rem;
+  height: 1.75rem;
+  transform: translateY(-50%);
+  border-radius: 9999px;
+  background-color: black;
+}
+
+.book-ticket-circles {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1.5rem;
+  display: flex;
+  flex-direction: row;
+  gap: 0.375rem;
+}
+
+/* Not Found */
+#not-found {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  width: 100%;
+}
+
+#not-found h4 {
+  color: white;
+  margin-top: 1.5rem;
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+#not-found p {
+  color: var(--color-light-100);
+  width: 360px;
+  margin-top: 0.25rem;
+}
+
+.not-found-btn {
+  background-color: var(--color-primary);
+  font-family: var(--font-family-bebas-neue);
+  min-width: 360px;
+  margin-top: 1.5rem;
+  color: var(--color-dark-100);
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  min-height: 3rem;
+}
+
+.not-found-btn:hover {
+  background-color: rgb(var(--color-primary) / 0.9);
+}
+
+/* Pagination */
+#pagination {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.pagination-btn_light {
+  background-color: var(--color-light-300);
+  color: var(--color-dark-300);
+}
+
+.pagination-btn_light:hover {
+  background-color: rgb(var(--color-light-300) / 0.7);
+}
+
+.pagination-btn_dark {
+  background-color: var(--color-dark-300);
+}
+
+.pagination-btn_dark:hover {
+  background-color: var(--color-dark-100);
+}
+
+#pagination p {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+  border-radius: 0.375rem;
+  text-align: center;
+}
+
+/* Sort */
+.select-trigger {
+  width: 10rem;
+  height: 2.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  background-color: var(--color-dark-300);
+  color: var(--color-light-100);
+  border-color: var(--color-dark-100);
+}
+
+.select-content {
+  background-color: var(--color-dark-300);
+  color: var(--color-light-100);
+  border-color: var(--color-dark-100);
+}
+
+.select-item:focus {
+  background-color: var(--color-dark-600);
+  color: var(--color-light-100);
+}
+
+/* Custom Gradient Utilities - v4 Style */
+@utility gradient-vertical {
+  background: linear-gradient(180deg, #12141d 0%, #12151f 100%);
+}
+
+@utility gradient-gray {
+  background: linear-gradient(270deg, #37363a 0%, #353637 100%);
+}
+
+@utility gradient-blue {
+  background: linear-gradient(180deg, #232839 0%, #12141d 100%);
+}
+
+/* Page Layout Utilities */
+@utility auth-container {
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  color: var(--color-light-100);
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+  }
+}
+
+@utility auth-form {
+  margin-top: auto;
+  margin-bottom: auto;
+  display: flex;
+  height: 100%;
+  min-height: 100vh;
+  flex: 1 1 0%;
+  align-items: center;
+  background-image: var(--background-image-pattern);
+  background-size: cover;
+  background-position: top;
+  background-color: var(--color-dark-100);
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+@utility auth-box {
+  background: linear-gradient(180deg, #12141d 0%, #12151f 100%);
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  max-width: 36rem;
+  flex-direction: column;
+  gap: 1.5rem;
+  border-radius: 0.5rem;
+  padding: 2.5rem;
+}
+
+@utility auth-illustration {
+  position: sticky;
+  height: 10rem;
+  width: 100%;
+
+  @media (min-width: 640px) {
+    top: 0;
+    height: 100vh;
+    flex: 1 1 0%;
+  }
+}
+
+@utility root-container {
+  display: flex;
+  min-height: 100vh;
+  flex: 1 1 0%;
+  flex-direction: column;
+  background-image: var(--background-image-pattern);
+  background-size: cover;
+  background-position: top;
+  background-color: var(--color-dark-100);
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+
+  @media (min-width: 480px) {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}
+
+@utility book-details {
+  margin-bottom: 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+
+  @media (min-width: 1024px) {
+    margin-top: 9rem;
+    flex-direction: row;
+  }
+
+  margin-top: 4rem;
+}
+
+@utility book-details-heading {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+@utility library {
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  max-width: 36rem;
+  width: 100%;
+  flex-direction: column;
+  text-align: center;
+}
+
+@utility library-subtitle {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-light-100);
+}
+
+@utility library-title {
+  margin-top: 0.5rem;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 600;
+  color: white;
+
+  @media (min-width: 480px) {
+    font-size: 3rem;
+    line-height: 1;
+  }
+}
