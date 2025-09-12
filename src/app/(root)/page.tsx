@@ -1,9 +1,13 @@
-export default function Home() {
+import BookOverview from "@/components/BookOverview"
+import BookList from "@/components/BookList"
+
+const Home = () => {
   return (
+    <>
+    <BookOverview/>
     
-      <button type="button" className="form-btn">
-        Click me
-      </button>
-    
-  );
+    <BookList/>
+    </>
+  )
 }
+export default Home
