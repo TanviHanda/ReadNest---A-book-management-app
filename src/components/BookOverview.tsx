@@ -2,6 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import BookCover from './BookCover'
 import { Button } from './ui/button'
+
 const BookOverview = ({
   title,
   author,
