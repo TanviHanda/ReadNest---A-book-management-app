@@ -8,7 +8,6 @@ import { Button } from './ui/button'
 const BookCard = ({
     id, 
     title,
-    author,
     genre,
     coverColor, 
     coverUrl, 
