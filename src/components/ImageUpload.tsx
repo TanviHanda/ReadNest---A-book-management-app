@@ -1,26 +1,45 @@
 'use client'
-import React from 'react'
-import {IKImage, ImageKitProvider, IkUpload} from '@imagekit/next';
-import config from '@/lib/config';
-try{
-  const response = await fetch(`${config.env.apiEndpoint}/api/auth/imagekit`);
+import { IKImage, ImageKitProvider, IKUpload } from 'imagekitio-next';
+import config from '@/lib/config'
+import React, { useState } from 'react'
+import { env } from '@/lib/env';
+import { useRef } from 'react';
+import ImageKit from 'imagekit';
 
-  if(!response.ok){
-    const errorText = await response.text();
+const {
+  env: {
+    imageKit: { publicKey, urlEndpoint },
+  },
+} = config;
 
-    throw new Error (message: `Request failed with status ${response.status}: ${errorText}`)
+const authenticator = async () => {
+  try {
+    const response = await fetch(`${env.NEXT_PUBLIC_API_ENDPOINT}/api/auth/imagekit`);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+    }
+
+    const data = await response.json();
+    const { signature, token, expire } = data;
+    return { signature, token, expire };
+  } catch (error: any) {
+    throw new Error(`Authentication request failed: ${error.message}`);
   }
-  const data = await response.json();
-  const {signature, token, expire} = data;
-  return {signature, token, expire};
-}catch(error: any){
-  throw new Error(message: `Authentication request`)
-}
-const ImageUpload =() => {
+};
 
+const ImageUpload = () => {
+  const ikUploadRef = useRef(initialValue: null);
+  const [file,setFile] = useState<{filePath: string} | null>
+  (initialState: null);
   return (
-    <ImageKitProvider publicKey={}>
-
+    <ImageKitProvider
+      publicKey={publicKey}
+      urlEndpoint={urlEndpoint}
+      authenticator={authenticator}
+    >
+      <IKUpload/>
     </ImageKitProvider>
   )
 }
