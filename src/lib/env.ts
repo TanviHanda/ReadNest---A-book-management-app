@@ -3,8 +3,8 @@ import { z } from "zod";
  
 export const env = createEnv({
   server: {
-    UPLOADTHING_TOKEN
-: z.string(),
+    UPLOADTHING_TOKEN: z.string(),
+    DATABASE_URL: z.url(),
   },
   client: {
   
@@ -12,6 +12,7 @@ export const env = createEnv({
   // If you're using Next.js < 13.4.4, you'll need to specify the runtimeEnv manually
   runtimeEnv: {
   UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
+  DATABASE_URL: process.env.DATABASE_URL,
   },
   // For Next.js >= 13.4.4, you only need to destructure client variables:
   // experimental__runtimeEnv: {
