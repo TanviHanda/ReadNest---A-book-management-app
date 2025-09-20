@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import type { ReactNode } from "react";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "./api/uploadthing/core";
+import { Toaster } from "@/components/ui/sonner";
 
 const ibmPlexSans = localFont({
   src: [
@@ -30,8 +34,18 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
       <body
         className={`${ibmPlexSans.className} ${bebasNeue.variable} antialiased`}
       >
+        <NextSSRPlugin
+          /**
+           * The `extractRouterConfig` will extract **only** the route configs
+           * from the router to prevent additional information from being
+           * leaked to the client. The data passed to the client is the same
+           * as if you were to fetch `/api/uploadthing` directly.
+           */
+          routerConfig={extractRouterConfig(ourFileRouter)}
+        />
+        <Toaster richColors />
+
         {children}
-      
       </body>
     </html>
   );
