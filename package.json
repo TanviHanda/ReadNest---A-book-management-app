@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "dotenv -e .env.local -- next dev",
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "biome check",
@@ -19,6 +19,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.2",
+    "dotenv-cli": "^10.0.0",
     "drizzle-orm": "^0.44.5",
     "imagekit": "^6.0.0",
     "lucide-react": "^0.543.0",
