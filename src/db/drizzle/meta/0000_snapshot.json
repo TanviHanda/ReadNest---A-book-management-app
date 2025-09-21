@@ -1,5 +1,5 @@
 {
-  "id": "b09ead84-db98-4ace-afa6-581aa69569ed",
+  "id": "2050c93c-201a-4480-bb47-ca044fae26cf",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -264,13 +264,6 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'USER'"
-        },
-        "last_activity_date": {
-          "name": "last_activity_date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
         },
         "created_at": {
           "name": "created_at",

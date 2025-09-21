@@ -1,15 +1,15 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
+import type {
   DefaultValues,
   FieldValues,
   Path,
   SubmitHandler,
-  useForm,
   UseFormReturn,
 } from "react-hook-form";
-import { ZodType } from "zod";
+import { useForm } from "react-hook-form";
+import type { ZodType } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -73,7 +73,7 @@ const AuthForm = <T extends FieldValues>({
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-2xl font-semibold text-white">
-        {isSignIn ? "Welcome back to BookWise" : "Create your library account"}
+        {isSignIn ? "Welcome back to ReadNest" : "Create your library account"}
       </h1>
       <p className="text-light-100">
         {isSignIn
@@ -132,7 +132,7 @@ const AuthForm = <T extends FieldValues>({
         {isSignIn ? "New to BookWise? " : "Already have an account? "}
 
         <Link
-          href={isSignIn ? "/sign-up" : "/sign-in"}
+          href={isSignIn ? "/auth/sign-up" : "/auth/sign-in"}
           className="font-bold text-primary"
         >
           {isSignIn ? "Create an account" : "Sign in"}
