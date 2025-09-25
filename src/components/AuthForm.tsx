@@ -30,7 +30,7 @@ import { useRouter } from "next/navigation";
 interface Props<T extends FieldValues> {
   schema: ZodType<T>;
   defaultValues: T;
-  onSubmit: (data: T) => Promise<{ success: boolean; error?: string }>;
+  onSubmit: (data: T) => Promise<void | { success: boolean; error?: string }>;
   type: "SIGN_IN" | "SIGN_UP";
 }
 
@@ -50,9 +50,11 @@ const AuthForm = <T extends FieldValues>({
   });
 
   const handleSubmit: SubmitHandler<T> = async (data) => {
+    console.log("AuthForm submitting", { type, data });
     const result = await onSubmit(data);
+    console.log("AuthForm submit result", result);
 
-    if (result.success) {
+    if (result?.success) {
       toast({
         title: "Success",
         description: isSignIn
@@ -64,7 +66,7 @@ const AuthForm = <T extends FieldValues>({
     } else {
       toast({
         title: `Error ${isSignIn ? "signing in" : "signing up"}`,
-        description: result.error ?? "An error occurred.",
+        description: result?.error ?? "An error occurred.",
         variant: "destructive",
       });
     }

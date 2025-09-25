@@ -9,8 +9,20 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { fullName, email, universityId, password, universityCard } = body;
 
+    // Log incoming signup data (avoid logging passwords in production)
+    // eslint-disable-next-line no-console
+    console.log('signup payload', { fullName, email, universityId, universityCard });
+
     if (!email || !password || !fullName) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // Validate universityId is a safe 32-bit integer for the DB column
+    const uniIdNum = Number(universityId || 0);
+    const INT32_MIN = -2147483648;
+    const INT32_MAX = 2147483647;
+    if (!Number.isInteger(uniIdNum) || uniIdNum < INT32_MIN || uniIdNum > INT32_MAX) {
+      return NextResponse.json({ error: 'Invalid universityId value' }, { status: 400 });
     }
 
     const existing = await db.select().from(users).where(eq(users.email, email)).limit(1);
@@ -27,6 +39,9 @@ export async function POST(req: Request) {
       password: hashed,
       universityCard: universityCard || "",
     });
+
+    // eslint-disable-next-line no-console
+    console.log("signup success for", email);
 
     return NextResponse.json({ success: true });
   } catch (err) {

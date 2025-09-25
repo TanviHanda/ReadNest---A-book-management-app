@@ -1,6 +1,6 @@
 import BookList from "@/components/BookList";
 import BookOverview from "@/components/BookOverview";
-import ImageUpload from "@/components/ImageUpload";
+import ImageUpload from "@/components/FileUpload";
 import { sampleBooks } from "@/constants";
 import { db } from "@/db";
 import { users } from "@/db/schema";

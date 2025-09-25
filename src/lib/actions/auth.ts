@@ -1,24 +1,21 @@
-"use client";
+"use server"
+import { signIn } from "@/auth";
 
-// Client-side helpers for auth flows. These call the server APIs / NextAuth endpoints.
+// Client-side helpers for auth flows.
+
 export async function signInWithCredentials(data: Record<string, unknown>) {
-  // NextAuth credentials callback expects form-urlencoded data.
-  const form = new URLSearchParams();
-  for (const [k, v] of Object.entries(data)) {
-    form.set(k, String(v ?? ""));
+  // Use next-auth client helper to sign in without redirect so we can handle
+  // the result and control navigation from the UI.
+  const res = await signIn("credentials", { redirect: false, ...data });
+
+  if (!res) return { success: false, error: "Sign in failed" };
+
+  // res can be a string or an object with an `error` property depending on next-auth
+  if (typeof res === "object" && res !== null && "error" in res) {
+    return { success: false, error: (res as { error?: string }).error };
   }
 
-  const res = await fetch("/api/auth/callback/credentials", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: form.toString(),
-  });
-
-  if (!res.ok) {
-    const payload = await res.json().catch(() => ({}));
-    return { success: false, error: payload.error || "Sign in failed" };
-  }
-
+  // Otherwise, assume sign-in succeeded. Return a consistent success shape
   return { success: true };
 }
 
@@ -34,5 +31,19 @@ export async function signUp(data: Record<string, unknown>) {
     return { success: false, error: payload.error || "Signup failed" };
   }
 
-  return res.json();
+  const payload = await res.json().catch(() => ({}));
+
+  if (payload.success) {
+    // Auto sign-in after successful registration so server-side session exists
+    const signin = await signInWithCredentials({
+      email: String(data.email ?? ""),
+      password: String(data.password ?? ""),
+    });
+
+    if (!signin?.success) return { success: false, error: signin?.error };
+
+    return { success: true };
+  }
+
+  return { success: false, error: payload.error || "Signup failed" };
 }
