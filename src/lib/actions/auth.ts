@@ -1,49 +1,77 @@
-"use server"
+"use server";
+
+import { eq } from "drizzle-orm";
+import { db } from "@/db";
+import { users } from "@/db/schema";
+import { hash } from "bcryptjs";
 import { signIn } from "@/auth";
+import { headers } from "next/headers";
+import ratelimit from "@/lib/ratelimit";
+import { redirect } from "next/navigation";
 
-// Client-side helpers for auth flows.
 
-export async function signInWithCredentials(data: Record<string, unknown>) {
-  // Use next-auth client helper to sign in without redirect so we can handle
-  // the result and control navigation from the UI.
-  const res = await signIn("credentials", { redirect: false, ...data });
+export const signInWithCredentials = async (
+  params: Pick<AuthCredentials, "email" | "password">,
+) => {
+  const { email, password } = params;
 
-  if (!res) return { success: false, error: "Sign in failed" };
+  const ip = (await headers()).get("x-forwarded-for") || "127.0.0.1";
+  const { success } = await ratelimit.limit(ip);
 
-  // res can be a string or an object with an `error` property depending on next-auth
-  if (typeof res === "object" && res !== null && "error" in res) {
-    return { success: false, error: (res as { error?: string }).error };
-  }
+  if (!success) return redirect("/too-fast");
 
-  // Otherwise, assume sign-in succeeded. Return a consistent success shape
-  return { success: true };
-}
-
-export async function signUp(data: Record<string, unknown>) {
-  const res = await fetch("/api/auth/signup", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-
-  if (!res.ok) {
-    const payload = await res.json().catch(() => ({}));
-    return { success: false, error: payload.error || "Signup failed" };
-  }
-
-  const payload = await res.json().catch(() => ({}));
-
-  if (payload.success) {
-    // Auto sign-in after successful registration so server-side session exists
-    const signin = await signInWithCredentials({
-      email: String(data.email ?? ""),
-      password: String(data.password ?? ""),
+  try {
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
     });
 
-    if (!signin?.success) return { success: false, error: signin?.error };
+    if (result?.error) {
+      return { success: false, error: result.error };
+    }
 
     return { success: true };
+  } catch (error) {
+    console.log(error, "Signin error");
+    return { success: false, error: "Signin error" };
+  }
+};
+
+export const signUp = async (params: AuthCredentials) => {
+  const { fullName, email, universityId, password, universityCard } = params;
+
+  const ip = (await headers()).get("x-forwarded-for") || "127.0.0.1";
+  const { success } = await ratelimit.limit(ip);
+
+  if (!success) return redirect("/too-fast");
+
+  const existingUser = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, email))
+    .limit(1);
+
+  if (existingUser.length > 0) {
+    return { success: false, error: "User already exists" };
   }
 
-  return { success: false, error: payload.error || "Signup failed" };
-}
+  const hashedPassword = await hash(password, 10);
+
+  try {
+    await db.insert(users).values({
+      fullName,
+      email,
+      universityId,
+      password: hashedPassword,
+      universityCard,
+    });
+
+    await signInWithCredentials({ email, password });
+
+    return { success: true };
+  } catch (error) {
+    console.log(error, "Signup error");
+    return { success: false, error: "Signup error" };
+  }
+};
