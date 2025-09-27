@@ -8,6 +8,13 @@
       "when": 1758475883125,
       "tag": "0000_lying_the_hand",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1758955447187,
+      "tag": "0001_opposite_wallop",
+      "breakpoints": true
     }
   ]
 }

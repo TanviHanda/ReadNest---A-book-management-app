@@ -12,6 +12,7 @@ export const env = createEnv({
     QSTASH_TOKEN: z.string(),
     QSTASH_CURRENT_SIGNING_KEY: z.string().optional(),
     QSTASH_NEXT_SIGNING_KEY: z.string().optional(),
+    RESEND_TOKEN: z.string()
   },
   client: {
     NEXT_PUBLIC_API_ENDPOINT: z.url(),
@@ -29,5 +30,6 @@ export const env = createEnv({
    QSTASH_TOKEN:process.env.QSTASH_TOKEN,
    QSTASH_CURRENT_SIGNING_KEY:process.env.QSTASH_CURRENT_SIGNING_KEY,
    QSTASH_NEXT_SIGNING_KEY:process.env.QSTASH_NEXT_SIGNING_KEY,
+   RESEND_TOKEN:process.env.RESEND_TOKEN
   },
 });
