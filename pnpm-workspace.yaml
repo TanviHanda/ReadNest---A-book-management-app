@@ -1,3 +1,7 @@
 onlyBuiltDependencies:
+  - '@swc/core'
   - '@tailwindcss/oxide'
+  - bcrypt
+  - esbuild
+  - msgpackr-extract
   - sharp

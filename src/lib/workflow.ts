@@ -15,7 +15,7 @@ email:string;
 subject:string;
 message:string
 }) => {
-await qstashclient.publishJSON({
+const {messageId,}=await qstashclient.publishJSON({
   api: {
     name: "email",
     provider: resend({ token: env.RESEND_TOKEN }),
@@ -27,4 +27,6 @@ await qstashclient.publishJSON({
     html: message,
   },
 });
+console.log("Email sent with messageId:", messageId);
+
 }
