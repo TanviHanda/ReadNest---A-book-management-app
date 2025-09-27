@@ -1,6 +1,3 @@
-/* Instead of @tailwind base/components/utilities, use @import */
-@import "tailwindcss";
-
 @theme {
     /* Custom component styles */
 
