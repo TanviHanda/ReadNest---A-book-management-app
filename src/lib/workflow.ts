@@ -21,7 +21,7 @@ await qstashclient.publishJSON({
     provider: resend({ token: env.RESEND_TOKEN }),
   },
   body: {
-    from: "Tanvi <hello.tanvi.dev>",
+    from: "onboarding@readnest.tanvii.dev",
     to: [email],
     subject,
     html: message,
