@@ -2,7 +2,7 @@ import { Session } from "next-auth";
 
 const Header = ({ session }: { session: Session }) => {
   return (
-    <header className="admin-header ">
+    <header className="admin-header">
       <div>
         <h2 className="text-2xl font-semibold text-dark-400">
           {session?.user?.name}

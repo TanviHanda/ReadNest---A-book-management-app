@@ -21,7 +21,7 @@ const Sidebar = ({ session }: { session: Session }) => {
             height={37}
             width={37}
           />
-          <h1>BookWise</h1>
+          <h1>ReadNest</h1>
         </div>
 
         <div className="mt-10 flex flex-col gap-5">
