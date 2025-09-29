@@ -13,6 +13,7 @@ interface ImageUploadProps {
   folder?: string;
   variant?: string;
   onFileChange?: (url: string) => void;
+  value?: string | null;
 }
 
 const ImageUpload = ({

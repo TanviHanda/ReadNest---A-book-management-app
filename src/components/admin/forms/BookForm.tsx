@@ -2,7 +2,9 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import type { Resolver } from "react-hook-form";
+import type { z } from "zod";
+import { useState } from "react";
 
 import {
   Form,
@@ -13,21 +15,28 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
 import { bookSchema } from "@/lib/validations";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import FileUpload from "@/components/FileUpload";
+import { UploadButton } from "@/lib/uploadthing";
+import { toast } from "sonner";
+import Image from "next/image";
+import ColorPicker from "../ColorPicker";
 
 interface Props extends Partial<Book> {
   type?: "create" | "update";
 }
 
-const BookForm = ({ type, ...book }: Props) => {
-  const router = useRouter();
+const BookForm = (props: Props) => {
+  const { type: _type } = props;
+  // local state for uploaded cover preview
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  const form = useForm<z.infer<typeof bookSchema>>({
-    resolver: zodResolver(bookSchema),
+  type FormValues = z.infer<typeof bookSchema>;
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(bookSchema) as unknown as Resolver<FormValues>,
     defaultValues: {
       title: "",
       description: "",
@@ -42,7 +51,7 @@ const BookForm = ({ type, ...book }: Props) => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof bookSchema>) => {};
+  const onSubmit = async (_values: FormValues) => {};
 
   return (
     <Form {...form}>
@@ -157,12 +166,36 @@ const BookForm = ({ type, ...book }: Props) => {
         <FormField
           control={form.control}
           name={"coverUrl"}
-          render={({ field }) => (
+          render={() => (
             <FormItem className="flex flex-col gap-1">
               <FormLabel className="text-base font-normal text-dark-500">
                 Book Image
               </FormLabel>
-              <FormControl>{/* FileUpload */}</FormControl>
+              <FormControl>
+                <UploadButton
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    const uploadedFileUrl = res[0].ufsUrl;
+                    setImageUrl(uploadedFileUrl);
+                    // set the form value for coverUrl
+                    try {
+                      form.setValue(
+                        "coverUrl",
+                        uploadedFileUrl as FormValues["coverUrl"],
+                      );
+                    } catch {
+                      // ignore if form isn't mounted yet
+                    }
+                    toast.success("Upload Completed");
+                  }}
+                  onUploadError={(error: Error) => {
+                    toast.error(`ERROR! ${error.message}`);
+                  }}
+                />
+              </FormControl>{" "}
+              {imageUrl && (
+                <Image src={imageUrl} alt="id card" height={400} width={400} />
+              )}
               <FormMessage />
             </FormItem>
           )}
@@ -175,7 +208,12 @@ const BookForm = ({ type, ...book }: Props) => {
               <FormLabel className="text-base font-normal text-dark-500">
                 Primary Color
               </FormLabel>
-              <FormControl>{/* colorPicker */}</FormControl>
+              <FormControl>
+                <ColorPicker
+                  onPickerChange={field.onChange}
+                  value={field.value}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
