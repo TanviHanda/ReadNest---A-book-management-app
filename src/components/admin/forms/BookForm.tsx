@@ -19,7 +19,6 @@ import { bookSchema } from "@/lib/validations";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import FileUpload from "@/components/FileUpload";
-import { UploadButton } from "@/lib/uploadthing";
 import { toast } from "sonner";
 import Image from "next/image";
 import ColorPicker from "../ColorPicker";
@@ -172,12 +171,11 @@ const BookForm = (props: Props) => {
                 Book Image
               </FormLabel>
               <FormControl>
-                <UploadButton
+                <FileUpload
                   endpoint="imageUploader"
-                  onClientUploadComplete={(res) => {
-                    const uploadedFileUrl = res[0].ufsUrl;
+                  renderPreview={true}
+                  onUploadComplete={(uploadedFileUrl) => {
                     setImageUrl(uploadedFileUrl);
-                    // set the form value for coverUrl
                     try {
                       form.setValue(
                         "coverUrl",
@@ -250,10 +248,8 @@ const BookForm = (props: Props) => {
               </FormLabel>
               <FormControl>
                 <FileUpload
-                  type="video"
-                  accept="video/*"
+                  uploadType="video"
                   placeholder="Upload a book trailer"
-                  folder="books/videos"
                   variant="light"
                   onFileChange={field.onChange}
                   value={field.value}
