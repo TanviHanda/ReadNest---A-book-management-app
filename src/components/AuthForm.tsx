@@ -44,7 +44,7 @@ const AuthForm = <T extends FieldValues>({
 
   const isSignIn = type === "SIGN_IN";
 
-  const form: UseFormReturn<T> = useForm({
+  const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: defaultValues as DefaultValues<T>,
   });

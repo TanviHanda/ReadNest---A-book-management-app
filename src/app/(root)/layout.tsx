@@ -8,7 +8,6 @@ import { db } from "@/db";
 import { eq } from "drizzle-orm";
 const Layout = async ({ children }: { children: ReactNode }) => {
   const session = await auth();
-  console.log("inside root layout", session);
 
   if (!session) redirect("/auth/sign-in");
 

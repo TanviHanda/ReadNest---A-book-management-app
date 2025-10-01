@@ -9,6 +9,25 @@ export const { auth, handlers, signIn, signOut, } = NextAuth({
     session: {
         strategy: "jwt",
     },
+    callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.name = user.name;
+      }
+
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.name = token.name as string;
+        //add custom values to used in nxtjs session
+      }
+
+      return session;
+    },
+  },
     providers: [
         CredentialsProvider({
             name: "Credentials",
@@ -20,7 +39,7 @@ export const { auth, handlers, signIn, signOut, } = NextAuth({
                 if (!credentials?.email || !credentials?.password) return null;
 
                 try {
-                    const rows: any[] = await db
+                    const rows = await db
                         .select()
                         .from(users)
                         .where(eq(users.email, credentials.email.toString()))
@@ -35,12 +54,13 @@ export const { auth, handlers, signIn, signOut, } = NextAuth({
                     );
 
                     if (!isPasswordValid) return null;
+console.log("user is:", user);
 
                     // Return a minimal user object
                     return {
                         id: String(user.id),
                         email: user.email,
-                        name: user.full_name ?? user.fullName ?? null,
+                        name:  user.fullName ?? null,
                     };
                 } catch (err) {
                     // On DB errors, fail authorization gracefully

@@ -22,7 +22,8 @@ import FileUpload from "@/components/FileUpload";
 import { toast } from "sonner";
 import Image from "next/image";
 import ColorPicker from "../ColorPicker";
-
+import { createBook } from "@/lib/admin/actions/book";
+import { useRouter } from "next/navigation";
 interface Props extends Partial<Book> {
   type?: "create" | "update";
 }
@@ -31,6 +32,7 @@ const BookForm = (props: Props) => {
   const { type: _type } = props;
   // local state for uploaded cover preview
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const router = useRouter();
 
   type FormValues = z.infer<typeof bookSchema>;
 
@@ -50,7 +52,16 @@ const BookForm = (props: Props) => {
     },
   });
 
-  const onSubmit = async (_values: FormValues) => {};
+  const onSubmit = async (_values: FormValues) => {
+    const result = await createBook(_values);
+
+    if (result.success) {
+      toast.success("Book created successfully");
+      router.push("/admin/books/");
+    } else {
+      toast.error(result.message || "Something went wrong");
+    }
+  };
 
   return (
     <Form {...form}>

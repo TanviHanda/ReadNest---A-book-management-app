@@ -1,13 +1,25 @@
-import React, { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import "@/styles/admin.css";
 import Sidebar from "@/components/admin/Sidebar";
 import Header from "@/components/Header";
+import { db } from "@/db";
+import { users } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { log } from "console";
 const Layout = async ({ children }: { children: ReactNode }) => {
   const session = await auth();
 
-  if (!session) redirect("/auth/sign-in");
+  if (!session || !session.user) redirect("/auth/sign-in");
+
+  const isAdmin = await db
+    .select({ isAdmin: users.role })
+    .from(users)
+    .where(eq(users.id, session.user.id))
+    .limit(1)
+    .then((res) => res[0]?.isAdmin === "ADMIN");
+  if (!isAdmin) redirect("/");
   return (
     <main className="flex min-h-screen w-full flex-row">
       <Sidebar session={session} />
