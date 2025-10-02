@@ -7,16 +7,19 @@ import Header from "@/components/Header";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { log } from "console";
 const Layout = async ({ children }: { children: ReactNode }) => {
   const session = await auth();
 
   if (!session || !session.user) redirect("/auth/sign-in");
 
+  // session.user.id should be defined because we redirected earlier if no session.user
+  const userId = session.user?.id;
+  if (!userId) redirect("/auth/sign-in");
+
   const isAdmin = await db
     .select({ isAdmin: users.role })
     .from(users)
-    .where(eq(users.id, session.user.id))
+    .where(eq(users.id, userId as string))
     .limit(1)
     .then((res) => res[0]?.isAdmin === "ADMIN");
   if (!isAdmin) redirect("/");

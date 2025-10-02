@@ -46,7 +46,7 @@ const BookForm = (props: Props) => {
       rating: 1,
       totalCopies: 1,
       coverUrl: "",
-      coverColor: "",
+      coverColor: "#012B48",
       videoUrl: "",
       summary: "",
     },
@@ -292,8 +292,13 @@ const BookForm = (props: Props) => {
           )}
         />
 
-        <Button type="submit" className="book-form_btn text-white">
-          Add Book to Library
+        <Button
+          type="submit"
+          className="book-form_btn text-white"
+          disabled={form.formState.isSubmitting}
+          aria-busy={form.formState.isSubmitting}
+        >
+          {form.formState.isSubmitting ? "Adding..." : "Add Book to Library"}
         </Button>
       </form>
     </Form>

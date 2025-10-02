@@ -1,28 +1,31 @@
 import BookList from "@/components/BookList";
 import BookOverview from "@/components/BookOverview";
 import ImageUpload from "@/components/FileUpload";
-import { sampleBooks } from "@/constants";
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { books } from "@/db/schema";
+import { desc } from "drizzle-orm";
+import { auth } from "@/auth";
 const Home = async () => {
-  let result = [];
-  try {
-    result = await db.select().from(users);
-  } catch (err) {
-    // Log a helpful error so you can inspect connection problems without
-    // the entire page failing.
-    // eslint-disable-next-line no-console
-    console.error("DB query failed:", err);
-    result = [];
-  }
+  const session = await auth();
+
+  const latestBooks = (await db
+    .select()
+    .from(books)
+    .orderBy(desc(books.createdAt))
+    .limit(10)) as Book[];
 
   return (
     <>
-      <BookOverview {...sampleBooks[0]} />
+      {latestBooks[0] && (
+        <BookOverview
+          {...latestBooks[0]}
+          userId={session?.user?.id as string}
+        />
+      )}
       <ImageUpload />
       <BookList
         title="Latest Books"
-        books={sampleBooks}
+        books={latestBooks.slice(1)}
         containerClassName="mt-28"
       />
     </>

@@ -10,24 +10,27 @@ export const { auth, handlers, signIn, signOut, } = NextAuth({
         strategy: "jwt",
     },
     callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.name = user.name;
-      }
+        // Persist user's id into the JWT when they sign in
+        async jwt({ token, user }) {
+            if (user) {
+                // user.id was returned from `authorize`
+                const u = user as unknown as { id?: string };
+                // token may already have sub, use it as fallback
+                (token as unknown as { id?: string }).id = u.id ?? token.sub;
+            }
+            return token;
+        },
 
-      return token;
+        // Make the id available on the session object
+        async session({ session, token }) {
+            if (session?.user) {
+                // Attach id from token (or fallback to token.sub)
+                const t = token as unknown as { id?: string; sub?: string };
+                (session.user as unknown as { id?: string }).id = t.id ?? t.sub;
+            }
+            return session;
+        },
     },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-        session.user.name = token.name as string;
-        //add custom values to used in nxtjs session
-      }
-
-      return session;
-    },
-  },
     providers: [
         CredentialsProvider({
             name: "Credentials",
