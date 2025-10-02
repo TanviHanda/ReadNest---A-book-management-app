@@ -1,11 +1,12 @@
-import type { ReactNode } from "react";
-import Header from "@/components/Header";
-import { auth } from "@/auth";
+import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
-import { users } from "@/db/schema";
+import type { ReactNode } from "react";
+import { auth } from "@/auth";
+import Header from "@/components/Header";
 import { db } from "@/db";
-import { eq } from "drizzle-orm";
+import { users } from "@/db/schema";
+
 const Layout = async ({ children }: { children: ReactNode }) => {
   const session = await auth();
 

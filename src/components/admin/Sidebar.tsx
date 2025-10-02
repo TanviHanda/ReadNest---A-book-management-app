@@ -1,12 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { adminSideBarLinks } from "@/constants";
 import Link from "next/link";
-import { cn, getInitials } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import type { Session } from "next-auth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Session } from "next-auth";
+import { adminSideBarLinks } from "@/constants";
+import { cn, getInitials } from "@/lib/utils";
 
 const Sidebar = ({ session }: { session: Session }) => {
   const pathname = usePathname();

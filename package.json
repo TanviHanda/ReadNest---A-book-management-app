@@ -4,14 +4,15 @@
   "private": true,
   "scripts": {
     "with-env": "dotenv -e .env.local --",
-    "dev": "npm run with-env -- next dev",
+    "dev": "npm run with-env -- next dev --turbo",
     "build": "npm run with-env next build --turbopack",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
     "db:generate": "npm run with-env drizzle-kit generate",
     "db:migrate": "npm run with-env drizzle-kit migrate",
-    "db:studio": "npm run with-env drizzle-kit studio"
+    "db:studio": "npm run with-env drizzle-kit studio",
+    "db:seed": "npm run with-env tsx src/db/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",

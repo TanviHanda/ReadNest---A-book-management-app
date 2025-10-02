@@ -1,8 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import React from "react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import BookCoverSvg from "./BookCoverSvg";
 
 type BookCoverVariant = "extraSmall" | "small" | "medium" | "regular" | "wide";
@@ -36,7 +36,7 @@ const BookCover = ({
         className,
       )}
     >
-     <BookCoverSvg coverColor={coverColor} />
+      <BookCoverSvg coverColor={coverColor} />
 
       <div
         className="absolute z-10"

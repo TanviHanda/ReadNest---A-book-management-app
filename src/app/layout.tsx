@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import type { ReactNode } from "react";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
-import { extractRouterConfig } from "uploadthing/server";
-import { ourFileRouter } from "./api/uploadthing/core";
-import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "next-auth/react";
+import type { ReactNode } from "react";
+import { extractRouterConfig } from "uploadthing/server";
 import { auth } from "@/auth";
+import { Toaster } from "@/components/ui/sonner";
+import { ourFileRouter } from "./api/uploadthing/core";
+
 const ibmPlexSans = localFont({
   src: [
     {

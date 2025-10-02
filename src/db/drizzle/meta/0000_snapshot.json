@@ -98,9 +98,7 @@
         "books_id_unique": {
           "name": "books_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "policies": {},
@@ -171,12 +169,8 @@
           "name": "borrow_records_user_id_users_id_fk",
           "tableFrom": "borrow_records",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -184,12 +178,8 @@
           "name": "borrow_records_book_id_books_id_fk",
           "tableFrom": "borrow_records",
           "tableTo": "books",
-          "columnsFrom": [
-            "book_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["book_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -199,9 +189,7 @@
         "borrow_records_id_unique": {
           "name": "borrow_records_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "policies": {},
@@ -280,23 +268,17 @@
         "users_id_unique": {
           "name": "users_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         },
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         },
         "users_university_id_unique": {
           "name": "users_university_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "university_id"
-          ]
+          "columns": ["university_id"]
         }
       },
       "policies": {},
@@ -308,27 +290,17 @@
     "public.borrow_status": {
       "name": "borrow_status",
       "schema": "public",
-      "values": [
-        "BORROWED",
-        "RETURNED"
-      ]
+      "values": ["BORROWED", "RETURNED"]
     },
     "public.role": {
       "name": "role",
       "schema": "public",
-      "values": [
-        "USER",
-        "ADMIN"
-      ]
+      "values": ["USER", "ADMIN"]
     },
     "public.status": {
       "name": "status",
       "schema": "public",
-      "values": [
-        "PENDING",
-        "APPROVED",
-        "REJECTED"
-      ]
+      "values": ["PENDING", "APPROVED", "REJECTED"]
     }
   },
   "schemas": {},

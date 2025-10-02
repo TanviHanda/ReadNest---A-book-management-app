@@ -1,6 +1,7 @@
+import Link from "next/link";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+
 const Page = () => {
   return (
     <section className="w-full rounded-2xl bg-white p-7">

@@ -24,7 +24,8 @@ export const bookSchema = z.object({
   coverColor: z
     .string()
     .trim()
-    .regex(/^#[0-9A-F]{6}$/i).default("#012B48"),
+    .regex(/^#[0-9A-F]{6}$/i)
+    .default("#012B48"),
   videoUrl: z.string().nonempty(),
   summary: z.string().trim().min(10),
 });

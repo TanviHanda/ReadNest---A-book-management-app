@@ -1,7 +1,7 @@
 "use server";
 
-import { books } from "@/db/schema";
 import { db } from "@/db";
+import { books } from "@/db/schema";
 
 export const createBook = async (params: BookParams) => {
   try {
@@ -12,7 +12,7 @@ export const createBook = async (params: BookParams) => {
         availableCopies: params.totalCopies,
       })
       .returning();
-console.log('newBook is:', newBook);
+    console.log("newBook is:", newBook);
 
     return {
       success: true,

@@ -18,7 +18,6 @@ export const ourFileRouter = {
       maxFileCount: 1,
     },
     video: { maxFileSize: "32MB", maxFileCount: 1 },
-    
   })
     // Set permissions and file types for this FileRoute
     .middleware(async ({ req }) => {

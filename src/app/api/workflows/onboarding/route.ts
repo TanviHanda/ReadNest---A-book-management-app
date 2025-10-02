@@ -1,7 +1,7 @@
 import { serve } from "@upstash/workflow/nextjs";
+import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { users } from "@/db/schema";
-import { eq } from "drizzle-orm";
 import { sendEmail } from "@/lib/workflow";
 
 type UserState = "non-active" | "active";

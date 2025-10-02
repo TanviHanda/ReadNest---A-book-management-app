@@ -1,11 +1,12 @@
 "use client";
-import { UploadButton } from "@/lib/uploadthing";
-import type { OurFileRouter } from "@/app/api/uploadthing/core";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { utapi } from "@/lib/utapi";
+import type { OurFileRouter } from "@/app/api/uploadthing/core";
 import { deleteUTFileAction } from "@/lib/actions/uploadthing";
+import { UploadButton } from "@/lib/uploadthing";
+import { utapi } from "@/lib/utapi";
+
 interface ImageUploadProps {
   onUploadComplete?: (url: string) => void;
   onUploadError?: (error: Error) => void;

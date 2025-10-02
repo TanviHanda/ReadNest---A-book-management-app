@@ -1,10 +1,11 @@
+import { desc } from "drizzle-orm";
+import { auth } from "@/auth";
 import BookList from "@/components/BookList";
 import BookOverview from "@/components/BookOverview";
 import ImageUpload from "@/components/FileUpload";
 import { db } from "@/db";
 import { books } from "@/db/schema";
-import { desc } from "drizzle-orm";
-import { auth } from "@/auth";
+
 const Home = async () => {
   const session = await auth();
 
@@ -22,7 +23,6 @@ const Home = async () => {
           userId={session?.user?.id as string}
         />
       )}
-      <ImageUpload />
       <BookList
         title="Latest Books"
         books={latestBooks.slice(1)}
