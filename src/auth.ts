@@ -1,6 +1,6 @@
 import { compare } from "bcryptjs";
 import { eq } from "drizzle-orm";
-import NextAuth, { NextAuthConfig } from "next-auth";
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/db";
 import { users } from "@/db/schema";
@@ -10,23 +10,24 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    // Persist user's id into the JWT when they sign in
+    // Persist user's id, role, and status into the JWT when they sign in
     async jwt({ token, user }) {
       if (user) {
-        // user.id was returned from `authorize`
-        const u = user as unknown as { id?: string };
-        // token may already have sub, use it as fallback
-        (token as unknown as { id?: string }).id = u.id ?? token.sub;
+        const u = user as unknown as { id?: string; role?: string; status?: string };
+        (token as unknown as { id?: string; role?: string; status?: string }).id = u.id ?? token.sub;
+        (token as unknown as { id?: string; role?: string; status?: string }).role = u.role;
+        (token as unknown as { id?: string; role?: string; status?: string }).status = u.status;
       }
       return token;
     },
 
-    // Make the id available on the session object
+    // Make the id, role, and status available on the session object
     async session({ session, token }) {
       if (session?.user) {
-        // Attach id from token (or fallback to token.sub)
-        const t = token as unknown as { id?: string; sub?: string };
-        (session.user as unknown as { id?: string }).id = t.id ?? t.sub;
+        const t = token as unknown as { id?: string; sub?: string; role?: string; status?: string };
+        (session.user as unknown as { id?: string; role?: string; status?: string }).id = t.id ?? t.sub;
+        (session.user as unknown as { id?: string; role?: string; status?: string }).role = t.role;
+        (session.user as unknown as { id?: string; role?: string; status?: string }).status = t.status;
       }
       return session;
     },
@@ -59,15 +60,15 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           if (!isPasswordValid) return null;
           console.log("user is:", user);
 
-          // Return a minimal user object
+          // Return user with role and status
           return {
             id: String(user.id),
             email: user.email,
             name: user.fullName ?? null,
+            role: user.role ?? "USER",
+            status: user.status ?? "PENDING",
           };
         } catch (err) {
-          // On DB errors, fail authorization gracefully
-          // eslint-disable-next-line no-console
           console.error("Authorize error:", err);
           return null;
         }

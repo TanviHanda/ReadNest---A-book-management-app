@@ -7,7 +7,7 @@ export const navigationLinks = [
   {
     img: "/icons/user.svg",
     selectedImg: "/icons/user-fill.svg",
-    href: "/my-profile",
+    href: "/myprofile",
     label: "My Profile",
   },
 ];

@@ -8,11 +8,13 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 
 export const STATUS_ENUM = pgEnum("status", [
   "PENDING",
   "APPROVED",
   "REJECTED",
+  "BANNED",
 ]);
 export const ROLE_ENUM = pgEnum("role", ["USER", "ADMIN"]);
 export const BORROW_STATUS_ENUM = pgEnum("borrow_status", [
@@ -67,3 +69,33 @@ export const borrowRecords = pgTable("borrow_records", {
   status: BORROW_STATUS_ENUM("status").default("BORROWED").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
+
+// System configuration table for admin settings
+export const systemConfig = pgTable("system_config", {
+  id: uuid("id").notNull().primaryKey().defaultRandom().unique(),
+  key: varchar("key", { length: 255 }).notNull().unique(),
+  value: text("value").notNull(),
+  description: text("description"),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+// Relations
+export const usersRelations = relations(users, ({ many }) => ({
+  borrowRecords: many(borrowRecords),
+}));
+
+export const booksRelations = relations(books, ({ many }) => ({
+  borrowRecords: many(borrowRecords),
+}));
+
+export const borrowRecordsRelations = relations(borrowRecords, ({ one }) => ({
+  user: one(users, {
+    fields: [borrowRecords.userId],
+    references: [users.id],
+  }),
+  book: one(books, {
+    fields: [borrowRecords.bookId],
+    references: [books.id],
+  }),
+}));

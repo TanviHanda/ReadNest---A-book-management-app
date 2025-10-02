@@ -1,8 +1,16 @@
 import Link from "next/link";
-import React from "react";
 import { Button } from "@/components/ui/button";
+import { getAllBooksForAdmin, deleteBook } from "@/lib/admin/actions/book";
+import { BooksTable } from "@/components/admin/BooksTable";
+import { redirect } from "next/navigation";
 
-const Page = () => {
+const Page = async () => {
+  const result = await getAllBooksForAdmin();
+
+  if (!result.success) {
+    redirect("/admin");
+  }
+
   return (
     <section className="w-full rounded-2xl bg-white p-7">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -14,7 +22,17 @@ const Page = () => {
         </Button>
       </div>
       <div className="mt-7 w-full overflow-hidden">
-        <p>Table</p>
+        <BooksTable
+          data={result.data}
+          onEdit={(book) => {
+            // TODO: Implement edit modal or redirect to edit page
+            console.log("Edit book:", book);
+          }}
+          onDelete={async (bookId) => {
+            // TODO: Add confirmation dialog
+            await deleteBook(bookId);
+          }}
+        />
       </div>
     </section>
   );

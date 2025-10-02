@@ -5,6 +5,7 @@ import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { SessionProvider } from "next-auth/react";
 import type { ReactNode } from "react";
 import { extractRouterConfig } from "uploadthing/server";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { auth } from "@/auth";
 import { Toaster } from "@/components/ui/sonner";
 import { ourFileRouter } from "./api/uploadthing/core";
@@ -57,7 +58,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
           />
           <Toaster richColors />
 
-          {children}
+          <NuqsAdapter>{children}</NuqsAdapter>
         </body>
       </SessionProvider>
     </html>

@@ -1,14 +1,14 @@
-import React from "react";
+// React import not required in Next.js automatic JSX runtime
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { books } from "@/db/schema";
 import { redirect } from "next/navigation";
 import BookOverview from "@/components/BookOverview";
-import { auth } from "@/auth";
 import BookVideo from "@/components/BookVideo";
+
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const id = (await params).id;
-  const session = await auth();
+
   const [bookDetails] = await db
     .select()
     .from(books)
@@ -17,11 +17,10 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
   if (!bookDetails) redirect("/404");
 
-  console.log(bookDetails);
-
   return (
     <>
-      <BookOverview {...bookDetails} userId={session?.user?.id as string} />
+      {/* Render static book overview; user-specific actions are client-only */}
+      <BookOverview {...bookDetails} />
 
       <div className="book-details">
         <div className="flex-[1.5]">
@@ -33,12 +32,12 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
             <h3>Summary</h3>
             <div className="space-y-5 text-xl text-light-100">
               {bookDetails.summary.split("\n").map((line, i) => (
-                <p key={i}>{line}</p>
+                <p key={`${line.slice(0, 20)}-${i}`}>{line}</p>
               ))}
             </div>
           </section>
         </div>
-        {/* SIMILA1R */}
+        {/* SIMILAR */}
       </div>
     </>
   );

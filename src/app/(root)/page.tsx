@@ -2,7 +2,6 @@ import { desc } from "drizzle-orm";
 import { auth } from "@/auth";
 import BookList from "@/components/BookList";
 import BookOverview from "@/components/BookOverview";
-import ImageUpload from "@/components/FileUpload";
 import { db } from "@/db";
 import { books } from "@/db/schema";
 
@@ -17,12 +16,7 @@ const Home = async () => {
 
   return (
     <>
-      {latestBooks[0] && (
-        <BookOverview
-          {...latestBooks[0]}
-          userId={session?.user?.id as string}
-        />
-      )}
+      {latestBooks[0] && <BookOverview {...latestBooks[0]} />}
       <BookList
         title="Latest Books"
         books={latestBooks.slice(1)}
