@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { getAllBooksForAdmin, deleteBook } from "@/lib/admin/actions/book";
+import { getAllBooksForAdmin } from "@/lib/admin/actions/book";
 import { BooksTable } from "@/components/admin/BooksTable";
 import { redirect } from "next/navigation";
 
@@ -22,17 +22,7 @@ const Page = async () => {
         </Button>
       </div>
       <div className="mt-7 w-full overflow-hidden">
-        <BooksTable
-          data={result.data}
-          onEdit={(book) => {
-            // TODO: Implement edit modal or redirect to edit page
-            console.log("Edit book:", book);
-          }}
-          onDelete={async (bookId) => {
-            // TODO: Add confirmation dialog
-            await deleteBook(bookId);
-          }}
-        />
+        <BooksTable data={result.data} />
       </div>
     </section>
   );

@@ -14,6 +14,9 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { deleteBook } from "@/lib/admin/actions/book";
 
 interface Book {
   id: string;
@@ -28,13 +31,42 @@ interface Book {
 
 interface BooksTableProps {
   data: Book[];
-  onEdit?: (book: Book) => void;
-  onDelete?: (bookId: string) => void;
 }
 
-export function BooksTable({ data, onEdit, onDelete }: BooksTableProps) {
+export function BooksTable({ data }: BooksTableProps) {
+  const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleEdit = (book: Book) => {
+    // TODO: Implement edit modal or redirect to edit page
+    console.log("Edit book:", book);
+    toast.info("Edit functionality coming soon!");
+  };
+
+  const handleDelete = async (bookId: string) => {
+    if (!confirm("Are you sure you want to delete this book?")) {
+      return;
+    }
+
+    setDeletingId(bookId);
+    try {
+      const result = await deleteBook(bookId);
+      
+      if (result.success) {
+        toast.success("Book deleted successfully!");
+        router.refresh();
+      } else {
+        toast.error(result.error || "Failed to delete book");
+      }
+    } catch (error) {
+      toast.error("An error occurred while deleting the book");
+      console.error(error);
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const columns: ColumnDef<Book>[] = [
     {
@@ -83,26 +115,26 @@ export function BooksTable({ data, onEdit, onDelete }: BooksTableProps) {
       header: "Actions",
       cell: ({ row }) => {
         const book = row.original;
+        const isDeleting = deletingId === book.id;
+        
         return (
           <div className="flex gap-2">
-            {onEdit && (
-              <button
-                type="button"
-                onClick={() => onEdit(book)}
-                className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Edit
-              </button>
-            )}
-            {onDelete && (
-              <button
-                type="button"
-                onClick={() => onDelete(book.id)}
-                className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                Delete
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => handleEdit(book)}
+              className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+              disabled={isDeleting}
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={() => handleDelete(book.id)}
+              className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </button>
           </div>
         );
       },
