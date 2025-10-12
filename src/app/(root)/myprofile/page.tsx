@@ -4,6 +4,8 @@ import {
   getUserBorrowQuota,
 } from "@/lib/actions/utils";
 import { BorrowedBooksList } from "@/components/BorrowedBooksList";
+import { LogoutButton } from "@/components/LogoutButton";
+import { logout } from "@/lib/actions/auth";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -22,9 +24,14 @@ const MyProfilePage = async () => {
     <div className="w-full p-6 space-y-8">
       {/* User Profile Header */}
       <section className="bg-white rounded-2xl p-7 shadow-sm">
-        <h1 className="text-2xl font-bold mb-2">{user.fullName}</h1>
-        <p className="text-gray-600">{user.email}</p>
-        <p className="text-gray-600">University ID: {user.universityId}</p>
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h1 className="text-2xl font-bold mb-2">{user.fullName}</h1>
+            <p className="text-gray-600">{user.email}</p>
+            <p className="text-gray-600">University ID: {user.universityId}</p>
+          </div>
+          <LogoutButton onLogout={logout} />
+        </div>
 
         {/* Borrow Quota Display */}
         <div className="mt-6 p-4 bg-blue-50 rounded-lg">

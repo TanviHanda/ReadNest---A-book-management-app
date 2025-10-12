@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { updateMaxBooksAllowed } from "@/lib/admin/actions/config";
 import { useRouter } from "next/navigation";
-
+import { Alert, AlertTitle } from "@/components/ui/alert";
 interface ConfigFormProps {
   initialMaxBooks: number;
 }
@@ -20,13 +20,17 @@ export function ConfigForm({ initialMaxBooks }: ConfigFormProps) {
     try {
       const result = await updateMaxBooksAllowed(maxBooks);
       if (result.success) {
-        alert("Configuration updated successfully!");
+        <Alert>
+          <AlertTitle>Configuration updated successfully!</AlertTitle>
+        </Alert>;
         router.refresh();
       } else {
         alert(`Error: ${result.error}`);
       }
     } catch {
-      alert("Failed to update configuration");
+      <Alert>
+        <AlertTitle>An unexpected error occurred.</AlertTitle>
+      </Alert>;
     } finally {
       setLoading(false);
     }

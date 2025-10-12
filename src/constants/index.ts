@@ -10,6 +10,7 @@ export const navigationLinks = [
     href: "/myprofile",
     label: "My Profile",
   },
+  
 ];
 
 export const adminSideBarLinks = [
