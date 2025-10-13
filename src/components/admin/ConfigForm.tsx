@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { updateMaxBooksAllowed } from "@/lib/admin/actions/config";
 import { useRouter } from "next/navigation";
-import { Alert, AlertTitle } from "@/components/ui/alert";
+import { toast } from "sonner";
+
 interface ConfigFormProps {
   initialMaxBooks: number;
 }
@@ -11,7 +12,7 @@ interface ConfigFormProps {
 export function ConfigForm({ initialMaxBooks }: ConfigFormProps) {
   const [maxBooks, setMaxBooks] = useState(initialMaxBooks);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const router = useRouter(); 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,17 +21,19 @@ export function ConfigForm({ initialMaxBooks }: ConfigFormProps) {
     try {
       const result = await updateMaxBooksAllowed(maxBooks);
       if (result.success) {
-        <Alert>
-          <AlertTitle>Configuration updated successfully!</AlertTitle>
-        </Alert>;
+        toast.success("Configuration updated successfully!", {
+          description: `Users can now borrow up to ${maxBooks} books.`,
+        });
         router.refresh();
       } else {
-        alert(`Error: ${result.error}`);
+        toast.error("Error", {
+          description: result.error,
+        });
       }
-    } catch {
-      <Alert>
-        <AlertTitle>An unexpected error occurred.</AlertTitle>
-      </Alert>;
+    } catch (error) {
+      toast.error("Unexpected error", {
+        description: "Something went wrong while updating configuration.",
+      });
     } finally {
       setLoading(false);
     }
