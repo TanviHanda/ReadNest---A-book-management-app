@@ -5,6 +5,15 @@ import { usePathname } from "next/navigation";
 import type { Session } from "next-auth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn, getInitials } from "@/lib/utils";
+import { logout } from "@/lib/actions/auth";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { LogoutButton } from "./LogoutButton";
 
 const Header = ({ session }: { session?: Session | null }) => {
   const pathname = usePathname();
@@ -25,14 +34,30 @@ const Header = ({ session }: { session?: Session | null }) => {
             Library
           </Link>
         </li>
+
+        {/* Avatar -> Dropdown trigger that shows options: Profile and Logout */}
         <li>
-          <Link href="/myprofile">
-            <Avatar>
-              <AvatarFallback className="bg-amber-100">
-                {getInitials(session?.user?.name || "IN")}
-              </AvatarFallback>
-            </Avatar>
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button type="button" aria-label="Open account options">
+                <Avatar>
+                  <AvatarFallback className="bg-amber-100">
+                    {getInitials(session?.user?.name || "IN")}
+                  </AvatarFallback>
+                </Avatar>
+              </button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link href="/myprofile">Profile</Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <LogoutButton onLogout={logout} />
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </li>
       </ul>
     </header>

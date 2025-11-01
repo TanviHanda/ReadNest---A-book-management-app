@@ -821,3 +821,59 @@
     line-height: 1;
   }
 }
+
+/* Dropdown Menu - Dark Mode Theme */
+[data-slot="dropdown-menu-content"] {
+  background-color: var(--color-dark-300);
+  border-color: var(--color-dark-600);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+
+[data-slot="dropdown-menu-item"] {
+  color: var(--color-light-100);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover,
+  &:focus {
+    background-color: var(--color-dark-600);
+    color: var(--color-light-200);
+  }
+
+  &[data-variant="destructive"] {
+    color: var(--color-red-800);
+
+    &:hover,
+    &:focus {
+      background-color: var(--color-red) / 10%;
+      color: var(--color-red-400);
+    }
+  }
+}
+
+[data-slot="dropdown-menu-separator"] {
+  background-color: var(--color-dark-600);
+}
+
+[data-slot="dropdown-menu-label"] {
+  color: var(--color-light-500);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Account Dropdown Avatar Button */
+[data-slot="dropdown-menu-trigger"] {
+  cursor: pointer;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}

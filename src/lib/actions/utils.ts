@@ -47,7 +47,7 @@ export async function requireAuth() {
   }
 
   if (user.status === "PENDING") {
-    throw new Error("Your account is pending approval");
+    throw new Error("Your account is pending approval, Please wait for a day or contact admin if urge");
   }
 
   if (user.status === "REJECTED") {
@@ -56,6 +56,16 @@ export async function requireAuth() {
 
   return user;
 }
+
+export async function requireUser() {
+  const user = await getCurrentUser();
+  
+  if (!user) {
+    throw new Error("Authentication required");
+  }
+  return user;
+}
+
 
 /**
  * Require admin role - throws error if not admin
