@@ -15,8 +15,30 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { toast } from "sonner";
+import {
+  Pencil,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  AlertTriangle,
+} from "lucide-react";
 import { deleteBook } from "@/lib/admin/actions/book";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Book {
   id: string;
@@ -40,20 +62,14 @@ export function BooksTable({ data }: BooksTableProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleEdit = (book: Book) => {
-    // TODO: Implement edit modal or redirect to edit page
-    console.log("Edit book:", book);
-    toast.info("Edit functionality coming soon!");
+    router.push(`/admin/books/${book.id}/edit`);
   };
 
   const handleDelete = async (bookId: string) => {
-    if (!confirm("Are you sure you want to delete this book?")) {
-      return;
-    }
-
     setDeletingId(bookId);
     try {
       const result = await deleteBook(bookId);
-      
+
       if (result.success) {
         toast.success("Book deleted successfully!");
         router.refresh();
@@ -73,28 +89,49 @@ export function BooksTable({ data }: BooksTableProps) {
       accessorKey: "title",
       header: "Title",
       cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("title")}</div>
+        <Link
+          href={`/books/${row.original.id}`}
+          className="font-medium text-dark-400 hover:text-primary-admin hover:underline transition-colors"
+        >
+          {row.getValue("title")}
+        </Link>
       ),
     },
     {
       accessorKey: "author",
       header: "Author",
+      cell: ({ row }) => (
+        <div className="text-slate-600">{row.getValue("author")}</div>
+      ),
     },
     {
       accessorKey: "genre",
       header: "Genre",
+      cell: ({ row }) => (
+        <div className="text-slate-600">{row.getValue("genre")}</div>
+      ),
     },
     {
       accessorKey: "rating",
       header: "Rating",
       cell: ({ row }) => {
         const rating = row.getValue("rating") as number;
-        return <div>{rating}/5</div>;
+        return (
+          <div className="flex items-center gap-1">
+            <span className="text-amber-500">★</span>
+            <span className="font-medium">{rating}/5</span>
+          </div>
+        );
       },
     },
     {
       accessorKey: "totalCopies",
       header: "Total Copies",
+      cell: ({ row }) => (
+        <div className="text-center font-medium">
+          {row.getValue("totalCopies")}
+        </div>
+      ),
     },
     {
       accessorKey: "availableCopies",
@@ -104,7 +141,9 @@ export function BooksTable({ data }: BooksTableProps) {
         const total = row.getValue("totalCopies") as number;
         const isLow = available < total * 0.3;
         return (
-          <div className={isLow ? "text-red-600 font-semibold" : ""}>
+          <div
+            className={`text-center font-semibold ${isLow ? "text-red-600" : "text-green-600"}`}
+          >
             {available}
           </div>
         );
@@ -116,25 +155,62 @@ export function BooksTable({ data }: BooksTableProps) {
       cell: ({ row }) => {
         const book = row.original;
         const isDeleting = deletingId === book.id;
-        
+
         return (
           <div className="flex gap-2">
-            <button
-              type="button"
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => handleEdit(book)}
-              className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
               disabled={isDeleting}
+              className="h-8 gap-1 border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
             >
+              <Pencil className="h-3.5 w-3.5" />
               Edit
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDelete(book.id)}
-              className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
-              disabled={isDeleting}
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </button>
+            </Button>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={isDeleting}
+                  className="h-8 gap-1 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
+                    <AlertTriangle className="h-7 w-7 text-red-600" />
+                  </div>
+                  <AlertDialogTitle className="text-center">
+                    Delete Book
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-center">
+                    Are you sure you want to delete{" "}
+                    <span className="font-semibold text-dark-400">
+                      "{book.title}"
+                    </span>
+                    ? This action cannot be undone and will permanently remove
+                    the book from the library.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="sm:justify-center gap-3">
+                  <AlertDialogCancel className="min-w-[100px]">
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => handleDelete(book.id)}
+                    className="min-w-[100px] bg-red-600 hover:bg-red-700"
+                  >
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         );
       },
@@ -157,35 +233,38 @@ export function BooksTable({ data }: BooksTableProps) {
   });
 
   return (
-    <div className="w-full">
-      <div className="mb-4">
-        <input
+    <div className="w-full space-y-4">
+      {/* Search Filter */}
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        <Input
           type="text"
           placeholder="Filter by title..."
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(e) =>
             table.getColumn("title")?.setFilterValue(e.target.value)
           }
-          className="px-3 py-2 border rounded-md w-full max-w-sm"
+          className="pl-9 bg-white border-slate-200"
         />
       </div>
 
-      <div className="rounded-md border overflow-hidden">
+      {/* Table */}
+      <div className="rounded-lg border border-slate-200 bg-white overflow-hidden shadow-sm">
         <table className="w-full">
-          <thead className="bg-gray-50">
+          <thead className="bg-slate-50 border-b border-slate-200">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-4 py-3 text-left text-sm font-semibold text-gray-900"
+                    className="px-4 py-3 text-left text-sm font-semibold text-slate-700"
                   >
                     {header.isPlaceholder ? null : (
                       <button
                         type="button"
                         className={
                           header.column.getCanSort()
-                            ? "cursor-pointer select-none flex items-center gap-2"
+                            ? "cursor-pointer select-none flex items-center gap-2 hover:text-primary-admin transition-colors"
                             : "flex items-center gap-2"
                         }
                         onClick={header.column.getToggleSortingHandler()}
@@ -196,8 +275,8 @@ export function BooksTable({ data }: BooksTableProps) {
                           header.getContext(),
                         )}
                         {{
-                          asc: " 🔼",
-                          desc: " 🔽",
+                          asc: " ↑",
+                          desc: " ↓",
                         }[header.column.getIsSorted() as string] ?? null}
                       </button>
                     )}
@@ -206,10 +285,13 @@ export function BooksTable({ data }: BooksTableProps) {
               </tr>
             ))}
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-slate-100">
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="hover:bg-gray-50">
+                <tr
+                  key={row.id}
+                  className="hover:bg-slate-50 transition-colors"
+                >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-4 py-3 text-sm">
                       {flexRender(
@@ -224,7 +306,7 @@ export function BooksTable({ data }: BooksTableProps) {
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-4 py-8 text-center text-gray-500"
+                  className="px-4 py-12 text-center text-slate-500"
                 >
                   No books found.
                 </td>
@@ -234,28 +316,36 @@ export function BooksTable({ data }: BooksTableProps) {
         </table>
       </div>
 
-      <div className="flex items-center justify-between mt-4">
+      {/* Pagination */}
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <button
-            type="button"
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-8 gap-1"
           >
+            <ChevronLeft className="h-4 w-4" />
             Previous
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-8 gap-1"
           >
             Next
-          </button>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
         </div>
-        <span className="text-sm text-gray-700">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
+        <span className="text-sm text-slate-600">
+          Page{" "}
+          <span className="font-medium">
+            {table.getState().pagination.pageIndex + 1}
+          </span>{" "}
+          of <span className="font-medium">{table.getPageCount()}</span>
         </span>
       </div>
     </div>

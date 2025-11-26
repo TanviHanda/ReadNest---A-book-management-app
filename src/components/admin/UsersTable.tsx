@@ -16,6 +16,30 @@ import {
 import { useState } from "react";
 import { banUser, approveUser, rejectUser } from "@/lib/admin/actions/user";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import {
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  CheckCircle,
+  XCircle,
+  Ban,
+  AlertTriangle,
+  ShieldAlert,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface User {
   id: string;
@@ -35,12 +59,14 @@ interface UsersTableProps {
 export function UsersTable({ data }: UsersTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const router = useRouter();
 
   const handleStatusChange = async (
     userId: string,
     action: "ban" | "approve" | "reject",
   ) => {
+    setLoadingAction(`${userId}-${action}`);
     try {
       let result: { success: boolean; data?: unknown; error?: string };
       if (action === "ban") result = await banUser(userId);
@@ -48,10 +74,21 @@ export function UsersTable({ data }: UsersTableProps) {
       else result = await rejectUser(userId);
 
       if (result.success) {
+        const messages = {
+          ban: "User has been banned",
+          approve: "User has been approved",
+          reject: "User has been rejected",
+        };
+        toast.success(messages[action]);
         router.refresh();
+      } else {
+        toast.error(result.error || "Action failed");
       }
     } catch (error) {
       console.error("Error updating user status:", error);
+      toast.error("An error occurred");
+    } finally {
+      setLoadingAction(null);
     }
   };
 
@@ -60,16 +97,26 @@ export function UsersTable({ data }: UsersTableProps) {
       accessorKey: "fullName",
       header: "Name",
       cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("fullName")}</div>
+        <div className="font-medium text-dark-400">
+          {row.getValue("fullName")}
+        </div>
       ),
     },
     {
       accessorKey: "email",
       header: "Email",
+      cell: ({ row }) => (
+        <div className="text-slate-600">{row.getValue("email")}</div>
+      ),
     },
     {
       accessorKey: "universityId",
       header: "University ID",
+      cell: ({ row }) => (
+        <div className="font-mono text-slate-600">
+          {row.getValue("universityId")}
+        </div>
+      ),
     },
     {
       accessorKey: "status",
@@ -77,14 +124,14 @@ export function UsersTable({ data }: UsersTableProps) {
       cell: ({ row }) => {
         const status = row.getValue("status") as string;
         const colors: Record<string, string> = {
-          PENDING: "bg-yellow-100 text-yellow-800",
+          PENDING: "bg-amber-100 text-amber-800",
           APPROVED: "bg-green-100 text-green-800",
           REJECTED: "bg-red-100 text-red-800",
-          BANNED: "bg-gray-800 text-white",
+          BANNED: "bg-slate-800 text-white",
         };
         return (
           <span
-            className={`px-2 py-1 rounded-full text-xs font-semibold ${colors[status] || ""}`}
+            className={`px-2.5 py-1 rounded-full text-xs font-semibold ${colors[status] || ""}`}
           >
             {status}
           </span>
@@ -98,7 +145,11 @@ export function UsersTable({ data }: UsersTableProps) {
         const role = row.getValue("role") as string;
         return (
           <span
-            className={role === "ADMIN" ? "font-semibold text-blue-600" : ""}
+            className={
+              role === "ADMIN"
+                ? "font-semibold text-primary-admin"
+                : "text-slate-600"
+            }
           >
             {role}
           </span>
@@ -111,37 +162,116 @@ export function UsersTable({ data }: UsersTableProps) {
       cell: ({ row }) => {
         const user = row.original;
         if (user.role === "ADMIN") {
-          return <span className="text-gray-400 text-sm">Admin</span>;
+          return (
+            <span className="text-slate-400 text-sm italic">Protected</span>
+          );
         }
+
+        const isLoading = (action: string) =>
+          loadingAction === `${user.id}-${action}`;
 
         return (
           <div className="flex gap-2">
             {user.status !== "APPROVED" && (
-              <button
-                type="button"
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => handleStatusChange(user.id, "approve")}
-                className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600"
+                disabled={loadingAction !== null}
+                className="h-8 gap-1 border-green-200 text-green-600 hover:bg-green-50 hover:text-green-700"
               >
-                Approve
-              </button>
+                <CheckCircle className="h-3.5 w-3.5" />
+                {isLoading("approve") ? "..." : "Approve"}
+              </Button>
             )}
+
             {user.status !== "REJECTED" && (
-              <button
-                type="button"
-                onClick={() => handleStatusChange(user.id, "reject")}
-                className="px-3 py-1 text-sm bg-orange-500 text-white rounded hover:bg-orange-600"
-              >
-                Reject
-              </button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={loadingAction !== null}
+                    className="h-8 gap-1 border-orange-200 text-orange-600 hover:bg-orange-50 hover:text-orange-700"
+                  >
+                    <XCircle className="h-3.5 w-3.5" />
+                    Reject
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-orange-100">
+                      <AlertTriangle className="h-7 w-7 text-orange-600" />
+                    </div>
+                    <AlertDialogTitle className="text-center">
+                      Reject User
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-center">
+                      Are you sure you want to reject{" "}
+                      <span className="font-semibold text-dark-400">
+                        {user.fullName}
+                      </span>
+                      ? They will not be able to access the library.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter className="sm:justify-center gap-3">
+                    <AlertDialogCancel className="min-w-[100px]">
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => handleStatusChange(user.id, "reject")}
+                      className="min-w-[100px] bg-orange-600 hover:bg-orange-700"
+                    >
+                      Reject
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
+
             {user.status !== "BANNED" && (
-              <button
-                type="button"
-                onClick={() => handleStatusChange(user.id, "ban")}
-                className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                Ban
-              </button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={loadingAction !== null}
+                    className="h-8 gap-1 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                  >
+                    <Ban className="h-3.5 w-3.5" />
+                    Ban
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
+                      <ShieldAlert className="h-7 w-7 text-red-600" />
+                    </div>
+                    <AlertDialogTitle className="text-center">
+                      Ban User
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-center">
+                      Are you sure you want to ban{" "}
+                      <span className="font-semibold text-dark-400">
+                        {user.fullName}
+                      </span>
+                      ? This will permanently prevent them from accessing the
+                      library.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter className="sm:justify-center gap-3">
+                    <AlertDialogCancel className="min-w-[100px]">
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => handleStatusChange(user.id, "ban")}
+                      className="min-w-[100px] bg-red-600 hover:bg-red-700"
+                    >
+                      Ban User
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
           </div>
         );
@@ -165,19 +295,23 @@ export function UsersTable({ data }: UsersTableProps) {
   });
 
   return (
-    <div className="w-full">
-      <div className="mb-4 flex gap-4">
-        <input
-          type="text"
-          placeholder="Filter by name..."
-          value={
-            (table.getColumn("fullName")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(e) =>
-            table.getColumn("fullName")?.setFilterValue(e.target.value)
-          }
-          className="px-3 py-2 border rounded-md w-full max-w-sm"
-        />
+    <div className="w-full space-y-4">
+      {/* Filters */}
+      <div className="flex flex-wrap gap-4">
+        <div className="relative max-w-sm flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Input
+            type="text"
+            placeholder="Filter by name..."
+            value={
+              (table.getColumn("fullName")?.getFilterValue() as string) ?? ""
+            }
+            onChange={(e) =>
+              table.getColumn("fullName")?.setFilterValue(e.target.value)
+            }
+            className="pl-9 bg-white border-slate-200"
+          />
+        </div>
         <select
           value={(table.getColumn("status")?.getFilterValue() as string) ?? ""}
           onChange={(e) =>
@@ -185,7 +319,7 @@ export function UsersTable({ data }: UsersTableProps) {
               .getColumn("status")
               ?.setFilterValue(e.target.value || undefined)
           }
-          className="px-3 py-2 border rounded-md"
+          className="h-10 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-admin focus:ring-offset-2"
         >
           <option value="">All Status</option>
           <option value="PENDING">Pending</option>
@@ -195,22 +329,23 @@ export function UsersTable({ data }: UsersTableProps) {
         </select>
       </div>
 
-      <div className="rounded-md border overflow-hidden">
+      {/* Table */}
+      <div className="rounded-lg border border-slate-200 bg-white overflow-hidden shadow-sm">
         <table className="w-full">
-          <thead className="bg-gray-50">
+          <thead className="bg-slate-50 border-b border-slate-200">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-4 py-3 text-left text-sm font-semibold text-gray-900"
+                    className="px-4 py-3 text-left text-sm font-semibold text-slate-700"
                   >
                     {header.isPlaceholder ? null : (
                       <button
                         type="button"
                         className={
                           header.column.getCanSort()
-                            ? "cursor-pointer select-none flex items-center gap-2"
+                            ? "cursor-pointer select-none flex items-center gap-2 hover:text-primary-admin transition-colors"
                             : "flex items-center gap-2"
                         }
                         onClick={header.column.getToggleSortingHandler()}
@@ -221,8 +356,8 @@ export function UsersTable({ data }: UsersTableProps) {
                           header.getContext(),
                         )}
                         {{
-                          asc: " 🔼",
-                          desc: " 🔽",
+                          asc: " ↑",
+                          desc: " ↓",
                         }[header.column.getIsSorted() as string] ?? null}
                       </button>
                     )}
@@ -231,10 +366,13 @@ export function UsersTable({ data }: UsersTableProps) {
               </tr>
             ))}
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-slate-100">
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="hover:bg-gray-50">
+                <tr
+                  key={row.id}
+                  className="hover:bg-slate-50 transition-colors"
+                >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-4 py-3 text-sm">
                       {flexRender(
@@ -249,7 +387,7 @@ export function UsersTable({ data }: UsersTableProps) {
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-4 py-8 text-center text-gray-500"
+                  className="px-4 py-12 text-center text-slate-500"
                 >
                   No users found.
                 </td>
@@ -259,28 +397,36 @@ export function UsersTable({ data }: UsersTableProps) {
         </table>
       </div>
 
-      <div className="flex items-center justify-between mt-4">
+      {/* Pagination */}
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <button
-            type="button"
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-8 gap-1"
           >
+            <ChevronLeft className="h-4 w-4" />
             Previous
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-8 gap-1"
           >
             Next
-          </button>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
         </div>
-        <span className="text-sm text-gray-700">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
+        <span className="text-sm text-slate-600">
+          Page{" "}
+          <span className="font-medium">
+            {table.getState().pagination.pageIndex + 1}
+          </span>{" "}
+          of <span className="font-medium">{table.getPageCount()}</span>
         </span>
       </div>
     </div>

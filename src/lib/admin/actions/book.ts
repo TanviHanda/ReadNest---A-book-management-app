@@ -19,7 +19,13 @@ export const createBook = async (params: BookParams) => {
       .returning();
     console.log("newBook is:", newBook);
 
+    // Revalidate all pages that display books
     revalidatePath("/admin/books");
+    revalidatePath("/library");
+    revalidatePath("/");
+    // Revalidate the new book's detail page
+    revalidatePath(`/books/${newBook[0].id}`);
+    
     return {
       success: true,
       data: JSON.parse(JSON.stringify(newBook[0])),
@@ -47,8 +53,13 @@ export async function updateBook(
       .where(eq(books.id, bookId))
       .returning();
 
+    // Revalidate all pages that display books
     revalidatePath("/admin/books");
+    revalidatePath("/library");
+    revalidatePath("/");
+    // Revalidate the specific book's detail page
     revalidatePath(`/books/${bookId}`);
+    
     return { success: true, data: JSON.parse(JSON.stringify(updatedBook[0])) };
   } catch (error) {
     console.error("Error updating book:", error);
@@ -62,7 +73,13 @@ export async function deleteBook(bookId: string) {
   try {
     await db.delete(books).where(eq(books.id, bookId));
 
+    // Revalidate all pages that display books
     revalidatePath("/admin/books");
+    revalidatePath("/library");
+    revalidatePath("/");
+    // Revalidate the deleted book's detail page (will show 404)
+    revalidatePath(`/books/${bookId}`);
+    
     return { success: true };
   } catch (error) {
     console.error("Error deleting book:", error);

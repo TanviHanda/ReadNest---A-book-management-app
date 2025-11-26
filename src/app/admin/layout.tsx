@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import "@/styles/admin.css";
 import { eq } from "drizzle-orm";
 import Sidebar from "@/components/admin/Sidebar";
-import Header from "@/components/Header";
+import Header from "@/components/admin/Header";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 
@@ -13,7 +13,6 @@ const Layout = async ({ children }: { children: ReactNode }) => {
 
   if (!session || !session.user) redirect("/auth/sign-in");
 
-  // session.user.id should be defined because we redirected earlier if no session.user
   const userId = session.user?.id;
   if (!userId) redirect("/auth/sign-in");
 
@@ -23,7 +22,9 @@ const Layout = async ({ children }: { children: ReactNode }) => {
     .where(eq(users.id, userId as string))
     .limit(1)
     .then((res) => res[0]?.isAdmin === "ADMIN");
-  if (!isAdmin) redirect("/");
+  if (!isAdmin) {
+    redirect("/");
+  }
   return (
     <main className="flex min-h-screen w-full flex-row">
       <Sidebar session={session} />

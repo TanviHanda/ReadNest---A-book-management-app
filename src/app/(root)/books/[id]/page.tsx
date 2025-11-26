@@ -6,6 +6,15 @@ import { redirect } from "next/navigation";
 import BookOverview from "@/components/BookOverview";
 import BookVideo from "@/components/BookVideo";
 
+// Generate static params for all books (for SEO and static generation)
+export async function generateStaticParams() {
+  const allBooks = await db.select({ id: books.id }).from(books);
+
+  return allBooks.map((book) => ({
+    id: book.id,
+  }));
+}
+
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const id = (await params).id;
 
