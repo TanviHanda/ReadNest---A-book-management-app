@@ -8,7 +8,7 @@ import { signIn, signOut } from "@/auth";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { env } from "@/lib/env";
-import ratelimit from "@/lib/ratelimit";
+import { limitRequest } from "@/lib/ratelimit";
 import { workflowClient } from "../workflow";
 
 export const signInWithCredentials = async (
@@ -17,7 +17,7 @@ export const signInWithCredentials = async (
   const { email, password } = params;
 
   const ip = (await headers()).get("x-forwarded-for") || "127.0.0.1";
-  const { success } = await ratelimit.limit(ip);
+  const { success } = await limitRequest(ip);
 
   if (!success) return redirect("/too-fast");
 
@@ -43,7 +43,7 @@ export const signUp = async (params: AuthCredentials) => {
   const { fullName, email, universityId, password, universityCard } = params;
 
   const ip = (await headers()).get("x-forwarded-for") || "127.0.0.1";
-  const { success } = await ratelimit.limit(ip);
+  const { success } = await limitRequest(ip);
 
   if (!success) return redirect("/too-fast");
 

@@ -9,3 +9,12 @@ const ratelimit = new Ratelimit({
 });
 
 export default ratelimit;
+
+export const limitRequest = async (identifier: string) => {
+  try {
+    return await ratelimit.limit(identifier);
+  } catch (error) {
+    console.warn("Rate limit backend unavailable; allowing request.", error);
+    return { success: true, pending: 0, limit: 0, reset: 0 };
+  }
+};
