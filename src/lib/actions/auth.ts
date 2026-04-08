@@ -72,10 +72,10 @@ export const signUp = async (params: AuthCredentials) => {
     //   url: `$env.PROD_ENDPOINT/api/workflows/onboarding`,
     //   body: { email, fullName },
     // })
-    await workflowClient.trigger({
-      url: `${env.PROD_ENDPOINT}/api/workflows/onboarding`,
-      body: { email, fullName },
-    });
+    // await workflowClient.trigger({
+    //   url: `${env.PROD_ENDPOINT}/api/workflows/onboarding`,
+    //   body: { email, fullName },
+    // });
 
     await signInWithCredentials({ email, password });
 
